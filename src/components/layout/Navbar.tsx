@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, Book, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import {
@@ -34,13 +35,13 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-background border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Book className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">BookStore</span>
+            <Book className="h-8 w-8 text-blue-600 dark:text-red-600" />
+            <span className="text-xl font-bold text-foreground">BookStore</span>
           </Link>
 
           {/* Search Bar */}
@@ -58,7 +59,7 @@ const Navbar = () => {
                   type="submit"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2"
                 >
-                  <Search className="h-5 w-5 text-gray-500" />
+                  <Search className="h-5 w-5 text-muted-foreground" />
                 </button>
               </div>
             </form>
@@ -66,6 +67,9 @@ const Navbar = () => {
 
           {/* Right side buttons */}
           <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Shopping Cart */}
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="sm">
@@ -123,7 +127,7 @@ const Navbar = () => {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div className="md:hidden border-t border-border py-4">
             <form onSubmit={handleSearch} className="mb-4">
               <div className="relative">
                 <Input
@@ -137,7 +141,7 @@ const Navbar = () => {
                   type="submit"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2"
                 >
-                  <Search className="h-5 w-5 text-gray-500" />
+                  <Search className="h-5 w-5 text-muted-foreground" />
                 </button>
               </div>
             </form>
@@ -157,14 +161,14 @@ const Navbar = () => {
       </div>
 
       {/* Category navigation */}
-      <div className="bg-gray-50 border-b border-gray-200">
+      <div className="bg-muted/50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8 py-3 text-sm">
-            <Link to="/books" className="hover:text-blue-600">All Books</Link>
-            <Link to="/books?category=fiction" className="hover:text-blue-600">Fiction</Link>
-            <Link to="/books?category=non-fiction" className="hover:text-blue-600">Non-Fiction</Link>
-            <Link to="/books?category=free" className="hover:text-blue-600">Free Books</Link>
-            <Link to="/books?category=bestsellers" className="hover:text-blue-600">Bestsellers</Link>
+            <Link to="/books" className="hover:text-primary transition-colors">All Books</Link>
+            <Link to="/books?category=fiction" className="hover:text-primary transition-colors">Fiction</Link>
+            <Link to="/books?category=non-fiction" className="hover:text-primary transition-colors">Non-Fiction</Link>
+            <Link to="/books?category=free" className="hover:text-primary transition-colors">Free Books</Link>
+            <Link to="/books?category=bestsellers" className="hover:text-primary transition-colors">Bestsellers</Link>
           </div>
         </div>
       </div>

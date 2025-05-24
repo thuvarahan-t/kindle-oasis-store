@@ -68,50 +68,59 @@ const Books = () => {
   const [filteredBooks, setFilteredBooks] = useState(allBooks);
   const [sortBy, setSortBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const category = searchParams.get('category');
   const searchFromUrl = searchParams.get('search');
 
   useEffect(() => {
-    let filtered = [...allBooks];
+    setIsLoading(true);
+    
+    // Simulate loading delay to show that the functionality works
+    const timer = setTimeout(() => {
+      let filtered = [...allBooks];
 
-    // Filter by category
-    if (category && category !== 'all') {
-      if (category === 'free') {
-        filtered = filtered.filter(book => book.price === 0);
-      } else if (category === 'bestsellers') {
-        filtered = filtered.filter(book => book.rating >= 4.5);
-      } else {
-        filtered = filtered.filter(book => book.category === category);
+      // Filter by category
+      if (category && category !== 'all') {
+        if (category === 'free') {
+          filtered = filtered.filter(book => book.price === 0);
+        } else if (category === 'bestsellers') {
+          filtered = filtered.filter(book => book.rating >= 4.5);
+        } else {
+          filtered = filtered.filter(book => book.category === category);
+        }
       }
-    }
 
-    // Filter by search query
-    const query = searchFromUrl || searchQuery;
-    if (query) {
-      filtered = filtered.filter(book => 
-        book.title.toLowerCase().includes(query.toLowerCase()) ||
-        book.author.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-
-    // Sort books
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'author':
-          return a.author.localeCompare(b.author);
-        default:
-          return a.title.localeCompare(b.title);
+      // Filter by search query
+      const query = searchFromUrl || searchQuery;
+      if (query) {
+        filtered = filtered.filter(book => 
+          book.title.toLowerCase().includes(query.toLowerCase()) ||
+          book.author.toLowerCase().includes(query.toLowerCase())
+        );
       }
-    });
 
-    setFilteredBooks(filtered);
+      // Sort books
+      filtered.sort((a, b) => {
+        switch (sortBy) {
+          case 'price-low':
+            return a.price - b.price;
+          case 'price-high':
+            return b.price - a.price;
+          case 'rating':
+            return b.rating - a.rating;
+          case 'author':
+            return a.author.localeCompare(b.author);
+          default:
+            return a.title.localeCompare(b.title);
+        }
+      });
+
+      setFilteredBooks(filtered);
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [category, searchFromUrl, searchQuery, sortBy]);
 
   const getCategoryTitle = () => {
@@ -125,10 +134,10 @@ const Books = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-8">
+    <div className="min-h-screen bg-background pt-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{getCategoryTitle()}</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-4">{getCategoryTitle()}</h1>
           
           {/* Search and Filter Controls */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -157,19 +166,33 @@ const Books = () => {
             </div>
           </div>
 
-          <p className="text-gray-600">{filteredBooks.length} books found</p>
+          <p className="text-muted-foreground">
+            {isLoading ? 'Loading...' : `${filteredBooks.length} books found`}
+          </p>
         </div>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
-          {filteredBooks.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-muted rounded-lg h-64 mb-4"></div>
+                <div className="bg-muted rounded h-4 mb-2"></div>
+                <div className="bg-muted rounded h-4 w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+            {filteredBooks.map((book) => (
+              <BookCard key={book.id} book={book} />
+            ))}
+          </div>
+        )}
 
-        {filteredBooks.length === 0 && (
+        {!isLoading && filteredBooks.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No books found matching your criteria.</p>
+            <p className="text-muted-foreground text-lg">No books found matching your criteria.</p>
           </div>
         )}
       </div>
